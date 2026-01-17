@@ -13,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -35,26 +36,26 @@ public class FileController {
     @CrossOrigin(origins = "*")
     public ResponseEntity<Map<String, String>> uploadFile(@RequestParam("file") MultipartFile file) {
         try {
-            // Clean filename
-            String originalFilename = file.getOriginalFilename();
-            if (originalFilename == null) {
-                originalFilename = "file.jpg";
+            // Convert to base64 for database storage (works in ephemeral file systems like Render)
+            byte[] fileBytes = file.getBytes();
+            String base64Image = Base64.getEncoder().encodeToString(fileBytes);
+            
+            // Detect content type
+            String contentType = file.getContentType();
+            if (contentType == null) {
+                contentType = "image/jpeg"; // Default
             }
             
-            String fileName = UUID.randomUUID().toString() + "_" + originalFilename;
-            Path targetLocation = fileStorageLocation.resolve(fileName);
-            Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
-            
-            // Return full URL path
-            String fileUrl = "/api/files/" + fileName;
+            // Create data URL
+            String dataUrl = "data:" + contentType + ";base64," + base64Image;
             
             Map<String, String> response = new HashMap<>();
-            response.put("url", fileUrl);
-            response.put("fileName", fileName);
+            response.put("url", dataUrl);
+            response.put("fileUrl", dataUrl); // Alias for compatibility
             
             return ResponseEntity.ok(response);
         } catch (IOException ex) {
-            throw new RuntimeException("Could not store file. Please try again!", ex);
+            throw new RuntimeException("Could not process file. Please try again!", ex);
         }
     }
     
@@ -71,22 +72,25 @@ public class FileController {
             
             Resource resource = new UrlResource(filePath.toUri());
             
-            if (!resource.exists() || !resource.isReadable()) {
-                return ResponseEntity.notFound().build();
+            // Try to serve file from local storage (for backward compatibility)
+            if (resource.exists() && resource.isReadable()) {
+                String contentType = Files.probeContentType(filePath);
+                if (contentType == null) {
+                    contentType = "application/octet-stream";
+                }
+                
+                return ResponseEntity.ok()
+                        .header(HttpHeaders.CONTENT_TYPE, contentType)
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
+                        .header(HttpHeaders.CACHE_CONTROL, "public, max-age=31536000")
+                        .header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*")
+                        .header(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, "GET, OPTIONS")
+                        .body(resource);
             }
             
-            String contentType = Files.probeContentType(filePath);
-            if (contentType == null) {
-                contentType = "application/octet-stream";
-            }
-            
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_TYPE, contentType)
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
-                    .header(HttpHeaders.CACHE_CONTROL, "public, max-age=31536000")
-                    .header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*")
-                    .header(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, "GET, OPTIONS")
-                    .body(resource);
+            // File doesn't exist (common in ephemeral file systems like Render)
+            // Images should now be stored as base64 data URLs in the database
+            return ResponseEntity.notFound().build();
         } catch (Exception ex) {
             return ResponseEntity.notFound().build();
         }

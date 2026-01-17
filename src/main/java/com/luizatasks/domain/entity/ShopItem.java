@@ -31,7 +31,7 @@ public class ShopItem {
     @Column(name = "points_cost", nullable = false)
     private Integer pointsCost;
     
-    @Column(name = "image_url", length = 500)
+    @Column(name = "image_url", columnDefinition = "TEXT")
     private String imageUrl;
     
     @Column(nullable = false)

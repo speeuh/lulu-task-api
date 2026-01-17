@@ -46,7 +46,7 @@ public class User implements UserDetails {
     @Builder.Default
     private Integer points = 0;
     
-    @Column(name = "profile_image_url", length = 500)
+    @Column(name = "profile_image_url", columnDefinition = "TEXT")
     private String profileImageUrl;
     
     @Enumerated(EnumType.STRING)
