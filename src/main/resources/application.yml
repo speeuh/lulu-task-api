@@ -3,9 +3,9 @@ spring:
     name: luiza-tasks-backend
   
   datasource:
-    url: jdbc:postgresql://localhost:5432/luizatasks
+    url: jdbc:postgresql://db.vpkrikfjuxhentbmdeaf.supabase.co:5432/postgres
     username: postgres
-    password: postgres
+    password: PassLuluTasks
     driver-class-name: org.postgresql.Driver
   
   jpa:
