@@ -1,0 +1,54 @@
+# 🔐 SECURITY WARNING
+# This file contains default passwords for DEVELOPMENT ONLY
+# NEVER use these passwords in production!
+
+spring:
+  application:
+    name: luiza-tasks-backend
+  
+  datasource:
+    url: jdbc:postgresql://localhost:5432/luizatasks
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+server:
+  port: 8080
+
+jwt:
+  secret: CHANGE-THIS-SECRET-IN-PRODUCTION-USE-STRONG-KEY
+  expiration: 86400000 # 24 hours in milliseconds
+
+app:
+  cors:
+    allowed-origins: http://localhost:3000,http://localhost:5173
+  
+  # Default users configuration (REQUIRED)
+  # ⚠️ OVERRIDE THESE IN PRODUCTION WITH ENVIRONMENT VARIABLES!
+  admin:
+    username: ${APP_ADMIN_USERNAME:admin}
+    password: ${APP_ADMIN_PASSWORD:CHANGE_THIS}
+    fullname: ${APP_ADMIN_FULLNAME:Administrador}
+  
+  user:
+    username: ${APP_USER_USERNAME:user}
+    password: ${APP_USER_PASSWORD:CHANGE_THIS}
+    fullname: ${APP_USER_FULLNAME:User}
+  
+  init:
+    createdefaultusers: ${APP_INIT_CREATEDEFAULTUSERS:false}
+
