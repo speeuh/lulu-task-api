@@ -30,6 +30,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             String jwt = getJwtFromRequest(request);
             
+            // Only process JWT if token is present and valid
             if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
                 String username = tokenProvider.getUsernameFromToken(jwt);
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
@@ -40,8 +41,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
+            // If no token or invalid token, continue anyway (permitAll endpoints will work)
         } catch (Exception ex) {
             logger.error("Could not set user authentication in security context", ex);
+            // Continue filter chain even if there's an error
         }
         
         filterChain.doFilter(request, response);

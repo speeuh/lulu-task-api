@@ -54,7 +54,8 @@ public class DataInitializer implements CommandLineRunner {
                     .role(UserRole.ROLE_ADMIN)
                     .points(0)
                     .themeType(ThemeType.COLOR)
-                    .themeValue("#FF9B8A")
+                    .themeValue("#90CAF9")
+                    .buttonColor("#81D4FA")
                     .active(true)
                     .build();
             userRepository.save(admin);
@@ -70,7 +71,8 @@ public class DataInitializer implements CommandLineRunner {
                     .role(UserRole.ROLE_USER)
                     .points(0)
                     .themeType(ThemeType.COLOR)
-                    .themeValue("#FF9B8A")
+                    .themeValue("#90CAF9")
+                    .buttonColor("#81D4FA")
                     .active(true)
                     .build();
             userRepository.save(defaultUser);

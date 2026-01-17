@@ -56,11 +56,11 @@ public class User implements UserDetails {
     
     @Column(name = "theme_value", length = 500)
     @Builder.Default
-    private String themeValue = "#FF9B8A"; // Cor padrão do print
+    private String themeValue = "#90CAF9"; // Cor padrão azul claro
     
     @Column(name = "button_color", length = 50)
     @Builder.Default
-    private String buttonColor = "#FF9B8A"; // Cor padrão dos botões
+    private String buttonColor = "#81D4FA"; // Cor padrão dos botões azul claro
     
     @Column(nullable = false)
     @Builder.Default

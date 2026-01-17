@@ -32,6 +32,7 @@ public class FileController {
     }
     
     @PostMapping("/upload")
+    @CrossOrigin(origins = "*")
     public ResponseEntity<Map<String, String>> uploadFile(@RequestParam("file") MultipartFile file) {
         try {
             // Clean filename
@@ -58,13 +59,20 @@ public class FileController {
     }
     
     @GetMapping("/{fileName:.+}")
+    @CrossOrigin(origins = "*")
     public ResponseEntity<Resource> downloadFile(@PathVariable String fileName) {
         try {
             Path filePath = fileStorageLocation.resolve(fileName).normalize();
+            
+            // Security check: prevent directory traversal
+            if (!filePath.startsWith(fileStorageLocation.normalize())) {
+                return ResponseEntity.status(403).build();
+            }
+            
             Resource resource = new UrlResource(filePath.toUri());
             
-            if (!resource.exists()) {
-                throw new RuntimeException("File not found: " + fileName);
+            if (!resource.exists() || !resource.isReadable()) {
+                return ResponseEntity.notFound().build();
             }
             
             String contentType = Files.probeContentType(filePath);
@@ -73,11 +81,14 @@ public class FileController {
             }
             
             return ResponseEntity.ok()
-                    .contentType(MediaType.parseMediaType(contentType))
+                    .header(HttpHeaders.CONTENT_TYPE, contentType)
                     .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
+                    .header(HttpHeaders.CACHE_CONTROL, "public, max-age=31536000")
+                    .header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*")
+                    .header(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, "GET, OPTIONS")
                     .body(resource);
         } catch (Exception ex) {
-            throw new RuntimeException("File not found: " + fileName, ex);
+            return ResponseEntity.notFound().build();
         }
     }
 }
