@@ -35,7 +35,7 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;
     
-    @Column(nullable = false, length = 100)
+    @Column(name = "full_name", nullable = false, length = 100)
     private String fullName;
     
     @Enumerated(EnumType.STRING)
@@ -46,19 +46,19 @@ public class User implements UserDetails {
     @Builder.Default
     private Integer points = 0;
     
-    @Column(length = 500)
+    @Column(name = "profile_image_url", length = 500)
     private String profileImageUrl;
     
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "theme_type", nullable = false)
     @Builder.Default
     private ThemeType themeType = ThemeType.COLOR;
     
-    @Column(length = 500)
+    @Column(name = "theme_value", length = 500)
     @Builder.Default
     private String themeValue = "#FF9B8A"; // Cor padrão do print
     
-    @Column(length = 50)
+    @Column(name = "button_color", length = 50)
     @Builder.Default
     private String buttonColor = "#FF9B8A"; // Cor padrão dos botões
     
@@ -67,11 +67,11 @@ public class User implements UserDetails {
     private Boolean active = true;
     
     @CreatedDate
-    @Column(nullable = false, updatable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
     
     @LastModifiedDate
-    @Column(nullable = false)
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
     
     // UserDetails implementation

@@ -28,14 +28,14 @@ public class RedemptionLog {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
     
-    @Column(nullable = false)
+    @Column(name = "item_name", nullable = false)
     private String itemName;
     
-    @Column(nullable = false)
+    @Column(name = "points_spent", nullable = false)
     private Integer pointsSpent;
     
     @CreatedDate
-    @Column(nullable = false, updatable = false)
+    @Column(name = "redeemed_at", nullable = false, updatable = false)
     private LocalDateTime redeemedAt;
 }
 

@@ -28,10 +28,10 @@ public class ShopItem {
     @Column(length = 500)
     private String description;
     
-    @Column(nullable = false)
+    @Column(name = "points_cost", nullable = false)
     private Integer pointsCost;
     
-    @Column(length = 500)
+    @Column(name = "image_url", length = 500)
     private String imageUrl;
     
     @Column(nullable = false)
@@ -39,11 +39,11 @@ public class ShopItem {
     private Boolean available = true;
     
     @CreatedDate
-    @Column(nullable = false, updatable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
     
     @LastModifiedDate
-    @Column(nullable = false)
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 }
 

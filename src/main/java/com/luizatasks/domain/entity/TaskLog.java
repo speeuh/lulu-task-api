@@ -28,14 +28,14 @@ public class TaskLog {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
     
-    @Column(nullable = false)
+    @Column(name = "task_title", nullable = false)
     private String taskTitle;
     
-    @Column(nullable = false)
+    @Column(name = "points_earned", nullable = false)
     private Integer pointsEarned;
     
     @CreatedDate
-    @Column(nullable = false, updatable = false)
+    @Column(name = "completed_at", nullable = false, updatable = false)
     private LocalDateTime completedAt;
 }
 
